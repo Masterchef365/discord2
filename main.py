@@ -88,7 +88,6 @@ async def index():
     rooms = await get_rooms()
 
     links = [{'name': name, 'url': f'/rooms/{room_id}'} for (name, room_id, ) in rooms]
-    random.shuffle(links) # We want to promote equality
 
     return await render_template('index.html', links=links)
 

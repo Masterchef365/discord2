@@ -25,8 +25,21 @@
                 window.scrollTo(0, document.body.scrollHeight);
             }
 
-            function on_submit_message() {
+            var needs_reset = false;
+
+            function on_submit_message(event) {
                 window.scrollTo(0, document.body.scrollHeight);
+                setTimeout(resetDelay, 10);
+                needs_reset = true;
+            }
+
+            function resetDelay() {
+                if (needs_reset) {
+                    var form = document.getElementById("sender_form");
+                    form.submit();
+                    form.reset();
+                    needs_reset = false;
+                }
             }
         </script>
     </head>
@@ -40,7 +53,7 @@
             {% endfor %}
         </div>
 
-        <form action="/rooms/{{room_id}}/send" method="post" id="sender" target="dummyframe" onsubmit="on_submit_message()">
+        <form action="/rooms/{{room_id}}/send" method="post" id="sender_form" target="dummyframe" onsubmit="on_submit_message()">
             <label for="message">Message:</label>
             <input type="text" id="message" name="message">
             <input type="submit" value="submit">
@@ -52,4 +65,4 @@
 
         <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
     </body>
-</html> 
+</html>
