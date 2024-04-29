@@ -12,8 +12,9 @@ async def setup_db(db):
     await db.execute(
 '''CREATE TABLE IF NOT EXISTS rooms (
     id INTEGER PRIMARY KEY,
-    name TEXT,
+    name TEXT
 )''')
+    await db.commit()
 
     await db.execute(
 '''CREATE TABLE IF NOT EXISTS messages (
@@ -22,7 +23,7 @@ async def setup_db(db):
     message TEXT,
     date INTEGER,
     user TEXT,
-    FOREIGN KEY (room_id) REFERENCES rooms(id),
+    FOREIGN KEY (room_id) REFERENCES rooms(id)
 )''')
     await db.commit()
 
