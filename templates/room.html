@@ -20,7 +20,7 @@
 
         <div id="messages">{{recent_messages}}</div>
 
-        <form action="/rooms/{{room_name}}/send" method="post" id="sender" target="dummyframe">
+        <form action="/rooms/{{room_id}}/send" method="post" id="sender" target="dummyframe">
             <label for="message">Message:</label>
             <input type="text" id="message" name="message">
             <input type="submit" value="submit">

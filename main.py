@@ -1,6 +1,7 @@
 import sqlite3
 import aiosqlite
 import random
+import time
 from quart import Quart, render_template, websocket, g, request, redirect, url_for
 
 app = Quart(__name__)
@@ -43,6 +44,27 @@ async def get_room_name(room_id):
 
     return None
 
+
+async def get_recent_messages(room_id):
+    db = await get_db()
+    query = "SELECT user, message, date FROM messages WHERE room_id=? ORDER BY date"
+    text = ""
+    async with db.execute(query, (room_id,)) as cur:
+        async for (user, message, _date) in cur:
+            text += f"{user}: {message}<br>"
+
+    return text
+
+
+async def add_msg_to_db(room_id, username, message):
+    db = await get_db()
+    date = int(time.time())
+
+    query = "INSERT INTO messages (room_id, user, message, date) VALUES (?, ?, ?, ?)"
+
+    await db.execute(query, (room_id, username, message, date,))
+    await db.commit()
+
 # #################### Database in g object ####################
 
 async def get_db() -> aiosqlite.Connection:
@@ -77,17 +99,20 @@ async def index():
 @app.route('/rooms/<room_id>/')
 async def room(room_id):
     """Room page accessible to user"""
+    room_id = room_id.strip()
+
     db = await get_db()
     room_name = await get_room_name(room_id)
 
     if room_name is None:
         return redirect('/')
 
-    recent_messages = ""
+    recent_messages = await get_recent_messages(room_id)
 
     return await render_template(
         'room.html', 
         room_name=room_name, 
+        room_id=room_id, 
         recent_messages=recent_messages
     )
 
@@ -121,13 +146,9 @@ async def send_message(room_id):
     username = data["username"]
     message = data["message"]
 
-    print(username, message)
+    await add_msg_to_db(room_id, username, message)
 
-    db = await get_db()
-
-
-    return redirect('/')
-
+    return "", 200
 
 
 if __name__ == "__main__":
