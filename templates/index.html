@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Discord 2</title>
+        <script>
+            function startup() {
+                // Prompt for username on login
+                while (document.cookie == "") {
+                    document.cookie = prompt("Please enter a username");
+                }
+
+                document.getElementById("welcome").innerHTML = "Welcome " + document.cookie;
+            }
+
+            function logout() {
+                document.cookie = ""
+                startup();
+            }
+        </script>
+    </head>
+    <body onload="startup()">
+        <h1>Discord 2</h1>
+
+        <div id="welcome">Original Text</div>
+
+        <a onclick="logout()">Log out</a>
+
+        <h2>Make a new chat room!</h2>
+
+
+
+        <h2>Chat rooms!</h2>
+    </body>
+</html> 
