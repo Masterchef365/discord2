@@ -5,7 +5,7 @@
         <script>
             function startup() {
                 // If the user hasn't logged in, kick them out!
-                if (document.cookie == "") {
+                if (document.cookie == "" || document.cookie == null) {
                     document.location.href = "/";
                 }
 
