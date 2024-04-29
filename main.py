@@ -121,6 +121,46 @@ async def punishment():
     return await render_template('punishment.html')
 
 
+# #################### message handling internals #################### 
+class RoomBroker:
+    def __init__(self):
+        self.connections = set()
+
+    async def publish(self, message: str):
+        for connection in self.connections:
+            await connection.put(message)
+
+    async def subscribe(self):
+        connection = asyncio.Queue()
+        self.connections.add(connection)
+        try:
+            while True:
+                yield await connection.get()
+        finally:
+            self.connections.remove(connection)
+
+
+class ServerBroker:
+    def __init__(self):
+        self.rooms = {}
+
+
+    def _get_room(self, room_id: int) -> RoomBroker:
+        if room_id not in self.rooms:
+            self.rooms[room_id] = RoomBroker()
+        return self.rooms[room_id]
+
+
+    async def publish(self, room_id: int, message: str):
+        return await self._get_room(room_id).publish(message)
+
+
+    async def subscribe(self, room_id: int):
+        return await self._get_room(room_id).subscribe()
+
+
+broker = ServerBroker()
+
 # #################### internal API surface #################### 
 
 @app.post("/create_room")
@@ -147,6 +187,23 @@ async def send_message(room_id):
     await add_msg_to_db(room_id, username, message)
 
     return "", 200
+
+
+async def _receive(room_id) -> None:
+    while True:
+        message = await websocket.receive()
+        await broker.publish(room_id, message)
+
+
+@app.post("/rooms/<room_id>/ws")
+async def ws(room_id) -> None:
+    try:
+        task = asyncio.ensure_future(_receive(room_id))
+        async for message in broker.subscribe(room_id):
+            await websocket.send(message)
+    finally:
+        task.cancel()
+        await task
 
 
 if __name__ == "__main__":
