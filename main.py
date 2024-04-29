@@ -1,3 +1,4 @@
+import asyncio
 import sqlite3
 import aiosqlite
 import random
@@ -151,12 +152,12 @@ class ServerBroker:
         return self.rooms[room_id]
 
 
-    async def publish(self, room_id: int, message: str):
-        return await self._get_room(room_id).publish(message)
+    def publish(self, room_id: int, message: str):
+        return self._get_room(room_id).publish(message)
 
 
-    async def subscribe(self, room_id: int):
-        return await self._get_room(room_id).subscribe()
+    def subscribe(self, room_id: int):
+        return self._get_room(room_id).subscribe()
 
 
 broker = ServerBroker()
@@ -184,26 +185,21 @@ async def send_message(room_id):
     username = data["username"]
     message = data["message"]
 
+    # Add the message to history
     await add_msg_to_db(room_id, username, message)
+
+    # Publish the message for real-time
+    await broker.publish(room, message)
 
     return "", 200
 
 
-async def _receive(room_id) -> None:
-    while True:
-        message = await websocket.receive()
-        await broker.publish(room_id, message)
-
-
-@app.post("/rooms/<room_id>/ws")
+@app.websocket("/rooms/<room_id>/ws")
 async def ws(room_id) -> None:
-    try:
-        task = asyncio.ensure_future(_receive(room_id))
-        async for message in broker.subscribe(room_id):
-            await websocket.send(message)
-    finally:
-        task.cancel()
-        await task
+    print("Subscribing", room_id)
+    async for message in broker.subscribe(room_id):
+        print(message)
+        await websocket.send(message)
 
 
 if __name__ == "__main__":

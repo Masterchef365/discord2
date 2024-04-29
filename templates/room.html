@@ -11,6 +11,18 @@
 
                 // Set hidden username property of the form
                 document.getElementById("username_hidden").value = document.cookie;
+
+                // Message receiving stuff
+                const ws = new WebSocket(`ws://${location.host}/rooms/{{room_id}}/ws`);
+
+                ws.addEventListener('message', function (event) {
+                    const elem = document.createElement("div");
+                    elem.appendChild(document.createTextNode(event.data));
+                    document.getElementById("messages").appendChild(elem);
+                });
+
+                // Scroll to bottom by default
+                window.scrollTo(0, document.body.scrollHeight);
             }
         </script>
     </head>
