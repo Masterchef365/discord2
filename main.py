@@ -59,9 +59,20 @@ async def index():
     """Main page!"""
     rooms = await get_rooms()
 
-    links = [{'name': name, 'url': f'/rooms/{id_}'} for (name, id_, ) in rooms]
+    links = [{'name': name, 'url': f'/rooms/{room_id}'} for (name, room_id, ) in rooms]
 
     return await render_template('index.html', links=links)
+
+
+@app.route('/rooms/<room_id>/')
+async def room(room_id):
+    db = await get_db()
+    async with db.execute("SELECT name FROM rooms WHERE id=?", room_id) as cur:
+        async for (name, ) in cur:
+            room_name = name
+            break
+
+    return await render_template('room.html', room_name=room_name)
 
 
 @app.post("/create_room")
