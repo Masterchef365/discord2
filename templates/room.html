@@ -2,20 +2,34 @@
 <html>
     <head>
         <title>{{room_name}} / Discord 2</title>
+        <script>
+            function startup() {
+                // If the user hasn't logged in, kick them out!
+                if (document.cookie == "") {
+                    document.location.href = "/";
+                }
+
+                // Set hidden username property of the form
+                document.getElementById("username_hidden").value = document.cookie;
+            }
+        </script>
     </head>
-    <body>
+    <body onload="startup()">
         <h1>Discord 2</h1>
         <h2>You are in room: {{room_name}}</h2>
 
         <div id="messages">{{recent_messages}}</div>
 
-        <form action="/send" method="post">
-          <label for="message">Message:</label>
-          <input type="text" id="message" name="message">
-          <input type="submit" value="submit">
+        <form action="/rooms/{{room_name}}/send" method="post" id="sender" target="dummyframe">
+            <label for="message">Message:</label>
+            <input type="text" id="message" name="message">
+            <input type="submit" value="submit">
+            <input type="hidden" name="username" id="username_hidden">
         </form>
 
         <br>
         <a href="/">Go back to main page</a>
+
+        <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
     </body>
 </html> 

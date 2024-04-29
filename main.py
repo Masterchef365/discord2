@@ -37,7 +37,7 @@ async def get_rooms():
 
 async def get_room_name(room_id):
     db = await get_db()
-    async with db.execute("SELECT name FROM rooms WHERE id=?", room_id) as cur:
+    async with db.execute("SELECT name FROM rooms WHERE id=?", (room_id,)) as cur:
         async for (name, ) in cur:
             return name
 
@@ -80,10 +80,10 @@ async def room(room_id):
     db = await get_db()
     room_name = await get_room_name(room_id)
 
-    recent_messages = ""
+    if room_name is None:
+        return redirect('/')
 
-    async with db.execute("SELECT name FROM rooms WHERE id=?", room_id) as cur:
-        pass
+    recent_messages = ""
 
     return await render_template(
         'room.html', 
@@ -115,8 +115,16 @@ async def create_room():
 
 
 @app.post("/rooms/<room_id>/send")
-async def send_message():
+async def send_message(room_id):
     """Endpoint which broadcasts a message to other clients"""
+    data = await request.form
+    username = data["username"]
+    message = data["message"]
+
+    print(username, message)
+
+    db = await get_db()
+
 
     return redirect('/')
 
