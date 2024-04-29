@@ -195,8 +195,11 @@ async def send_message(room_id):
 
 @app.websocket("/rooms/<room_id>/ws")
 async def ws(room_id) -> None:
-    async for message in broker.subscribe(room_id):
-        await websocket.send(message)
+    try:
+        async for message in broker.subscribe(room_id):
+            await websocket.send(message)
+    finally:
+        pass
 
 
 if __name__ == "__main__":
