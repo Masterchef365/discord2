@@ -159,7 +159,13 @@ class ServerBroker:
 
 def message_magic(message: str):
     if message.startswith('http'):
-        message = f"<a href={message}>{message}</a>"
+        if message.endswith(('png', 'gif', 'jpg', 'jpeg', 'webp', 'svg')):
+            # Image
+            message = f"<img src={message}>"
+        else:
+            # Link
+            message = f"<a href={message}>{message}</a>"
+
 
     return message
 
