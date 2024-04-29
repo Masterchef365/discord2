@@ -103,10 +103,10 @@ async def punishment():
 @app.post("/create_room")
 async def create_room():
     """Creates a new room"""
-    data = await request.get_data()
+    data = await request.form
     db = await get_db()
 
-    _, new_room_name = data.decode('ascii').split('=')
+    new_room_name = data["name"]
 
     await db.execute("INSERT INTO rooms (name) VALUES (?)", (new_room_name,))
     await db.commit()
