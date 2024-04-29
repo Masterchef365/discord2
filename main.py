@@ -128,7 +128,6 @@ class RoomBroker:
         self.connections = set()
 
     async def publish(self, message: str):
-        print(self.connections)
         for connection in self.connections:
             await connection.put(message)
 
@@ -194,11 +193,8 @@ async def send_message(room_id):
 
 @app.websocket("/rooms/<room_id>/ws")
 async def ws(room_id) -> None:
-    print("Subscribing", room_id)
     async for message in broker.subscribe(room_id):
-        print("Sending on ws", message)
         await websocket.send(message)
-    print("Exit loop")
 
 
 if __name__ == "__main__":

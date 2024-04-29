@@ -24,6 +24,10 @@
                 // Scroll to bottom by default
                 window.scrollTo(0, document.body.scrollHeight);
             }
+
+            function on_submit_message() {
+                window.scrollTo(0, document.body.scrollHeight);
+            }
         </script>
     </head>
     <body onload="startup()">
@@ -36,7 +40,7 @@
             {% endfor %}
         </div>
 
-        <form action="/rooms/{{room_id}}/send" method="post" id="sender" target="dummyframe">
+        <form action="/rooms/{{room_id}}/send" method="post" id="sender" target="dummyframe" onsubmit="on_submit_message()">
             <label for="message">Message:</label>
             <input type="text" id="message" name="message">
             <input type="submit" value="submit">
