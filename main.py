@@ -157,6 +157,13 @@ class ServerBroker:
         return self._get_room(room_id).subscribe()
 
 
+def message_magic(message: str):
+    if message.startswith('http'):
+        message = f"<a href={message}>{message}</a>"
+
+    return message
+
+
 broker = ServerBroker()
 
 # #################### internal API surface #################### 
@@ -184,6 +191,8 @@ async def send_message(room_id):
     data = await request.form
     username = data["username"]
     message = data["message"]
+
+    message = message_magic(message)
 
     # Add the message to history
     await add_msg_to_db(room_id, username, message)
