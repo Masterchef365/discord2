@@ -1,5 +1,6 @@
 import sqlite3
 import aiosqlite
+import random
 from quart import Quart, render_template, websocket, g, request
 
 app = Quart(__name__)
@@ -34,6 +35,14 @@ async def get_rooms():
         return [row async for row in cursor]
 
 
+async def get_room_name(room_id):
+    db = await get_db()
+    async with db.execute("SELECT name FROM rooms WHERE id=?", room_id) as cur:
+        async for (name, ) in cur:
+            return name
+
+    return None
+
 # #################### Database in g object ####################
 
 async def get_db() -> aiosqlite.Connection:
@@ -60,19 +69,20 @@ async def index():
     rooms = await get_rooms()
 
     links = [{'name': name, 'url': f'/rooms/{room_id}'} for (name, room_id, ) in rooms]
+    random.shuffle(links) # We want to promote equality
 
     return await render_template('index.html', links=links)
+
 
 
 @app.route('/rooms/<room_id>/')
 async def room(room_id):
     db = await get_db()
-    async with db.execute("SELECT name FROM rooms WHERE id=?", room_id) as cur:
-        async for (name, ) in cur:
-            room_name = name
-            break
+    room_name = await get_room_name(room_id)
 
-    recent_messages = "Nothing yet"
+    recent_messages = ""
+    async with db.execute("SELECT name FROM rooms WHERE id=?", room_id) as cur:
+        pass
 
     return await render_template(
         'room.html', 
