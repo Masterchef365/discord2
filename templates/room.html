@@ -18,7 +18,11 @@
         <h1>Discord 2</h1>
         <h2>You are in room: {{room_name}}</h2>
 
-        <div id="messages">{{recent_messages}}</div>
+        <div id="messages">
+            {% for msg in recent_messages %}
+            <div>{{ msg.user }}: {{ msg.message }}</div>
+            {% endfor %}
+        </div>
 
         <form action="/rooms/{{room_id}}/send" method="post" id="sender" target="dummyframe">
             <label for="message">Message:</label>

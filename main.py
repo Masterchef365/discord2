@@ -48,12 +48,8 @@ async def get_room_name(room_id):
 async def get_recent_messages(room_id):
     db = await get_db()
     query = "SELECT user, message, date FROM messages WHERE room_id=? ORDER BY date"
-    text = ""
     async with db.execute(query, (room_id,)) as cur:
-        async for (user, message, _date) in cur:
-            text += f"{user}: {message}<br>"
-
-    return text
+        return [row async for row in cur]
 
 
 async def add_msg_to_db(room_id, username, message):
@@ -99,16 +95,18 @@ async def index():
 @app.route('/rooms/<room_id>/')
 async def room(room_id):
     """Room page accessible to user"""
-    room_id = room_id.strip()
-
+    # Determine which room we are in
     db = await get_db()
     room_name = await get_room_name(room_id)
 
     if room_name is None:
         return redirect('/')
 
+    # Get recent messages
     recent_messages = await get_recent_messages(room_id)
+    recent_messages = [{'user': user, 'message': message} for (user, message, _date) in recent_messages]
 
+    # Send user initial page
     return await render_template(
         'room.html', 
         room_name=room_name, 
