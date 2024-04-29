@@ -72,7 +72,18 @@ async def room(room_id):
             room_name = name
             break
 
-    return await render_template('room.html', room_name=room_name)
+    recent_messages = "Nothing yet"
+
+    return await render_template(
+        'room.html', 
+        room_name=room_name, 
+        recent_messages=recent_messages
+    )
+
+
+@app.get("/punishment")
+async def punishment():
+    return await render_template('punishment.html')
 
 
 @app.post("/create_room")

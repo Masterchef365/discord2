@@ -4,9 +4,17 @@
         <title>Discord 2</title>
         <script>
             function startup() {
+                if (document.cookie == "null") {
+                    document.cookie = "";
+                }
+
                 // Prompt for username on login
                 while (document.cookie == "") {
                     document.cookie = prompt("Please enter a username");
+                }
+
+                if (document.cookie == "null") {
+                    window.location.href = "/punishment"
                 }
 
                 document.getElementById("welcome").innerHTML = "Welcome " + document.cookie;

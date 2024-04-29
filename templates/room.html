@@ -7,6 +7,8 @@
         <h1>Discord 2</h1>
         <h2>You are in room: {{room_name}}</h2>
 
+        <div id="messages">{{recent_messages}}</div>
+
         <form action="/send" method="post">
           <label for="message">Message:</label>
           <input type="text" id="message" name="message">
