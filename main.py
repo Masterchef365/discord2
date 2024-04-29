@@ -61,7 +61,7 @@ async def close_connection(exception):
     if db is not None:
         await db.close()
 
-# #################### HTTP Endpoints #################### 
+# #################### Pages #################### 
 
 @app.route("/")
 async def index():
@@ -74,13 +74,14 @@ async def index():
     return await render_template('index.html', links=links)
 
 
-
 @app.route('/rooms/<room_id>/')
 async def room(room_id):
+    """Room page accessible to user"""
     db = await get_db()
     room_name = await get_room_name(room_id)
 
     recent_messages = ""
+
     async with db.execute("SELECT name FROM rooms WHERE id=?", room_id) as cur:
         pass
 
@@ -93,8 +94,11 @@ async def room(room_id):
 
 @app.get("/punishment")
 async def punishment():
+    """Punishment page inflicted upon the user"""
     return await render_template('punishment.html')
 
+
+# #################### internal API surface #################### 
 
 @app.post("/create_room")
 async def create_room():
