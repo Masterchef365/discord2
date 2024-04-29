@@ -128,6 +128,7 @@ class RoomBroker:
         self.connections = set()
 
     async def publish(self, message: str):
+        print(self.connections)
         for connection in self.connections:
             await connection.put(message)
 
@@ -145,16 +146,13 @@ class ServerBroker:
     def __init__(self):
         self.rooms = {}
 
-
     def _get_room(self, room_id: int) -> RoomBroker:
         if room_id not in self.rooms:
             self.rooms[room_id] = RoomBroker()
         return self.rooms[room_id]
 
-
     def publish(self, room_id: int, message: str):
         return self._get_room(room_id).publish(message)
-
 
     def subscribe(self, room_id: int):
         return self._get_room(room_id).subscribe()
@@ -189,7 +187,7 @@ async def send_message(room_id):
     await add_msg_to_db(room_id, username, message)
 
     # Publish the message for real-time
-    await broker.publish(room, message)
+    await broker.publish(room_id, f"{username}: {message}")
 
     return "", 200
 
@@ -198,8 +196,9 @@ async def send_message(room_id):
 async def ws(room_id) -> None:
     print("Subscribing", room_id)
     async for message in broker.subscribe(room_id):
-        print(message)
+        print("Sending on ws", message)
         await websocket.send(message)
+    print("Exit loop")
 
 
 if __name__ == "__main__":
