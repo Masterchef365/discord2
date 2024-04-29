@@ -168,6 +168,9 @@ async def create_room():
 
     new_room_name = data["name"]
 
+    if new_room_name == "":
+        return redirect('/punishment')
+
     await db.execute("INSERT INTO rooms (name) VALUES (?)", (new_room_name,))
     await db.commit()
 
