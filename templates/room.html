@@ -17,7 +17,9 @@
 
                 ws.addEventListener('message', function (event) {
                     const elem = document.createElement("div");
-                    elem.appendChild(document.createTextNode(event.data));
+                    // Intentionally allow injections
+                    elem.innerHTML = event.data
+                    // elem.appendChild(document.createTextNode(event.data));
                     document.getElementById("messages").appendChild(elem);
                 });
 
@@ -49,7 +51,7 @@
 
         <div id="messages">
             {% for msg in recent_messages %}
-            <div>{{ msg.user }}: {{ msg.message }}</div>
+            <div>{{ msg.user }}: {{ msg.message|safe }}</div>
             {% endfor %}
         </div>
 
