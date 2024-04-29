@@ -114,5 +114,13 @@ async def create_room():
     return redirect('/')
 
 
+@app.post("/rooms/<room_id>/send")
+async def send_message():
+    """Endpoint which broadcasts a message to other clients"""
+
+    return redirect('/')
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
