@@ -3,6 +3,7 @@ import sqlite3
 import aiosqlite
 import random
 import time
+import sys
 from quart import Quart, render_template, websocket, g, request, redirect, url_for
 
 app = Quart(__name__)
@@ -203,4 +204,7 @@ async def ws(room_id) -> None:
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=80, host='0.0.0.0')
+    if len(sys.argv) > 1:
+        app.run(debug=True)
+    else:
+        app.run(port=80, host='0.0.0.0')
