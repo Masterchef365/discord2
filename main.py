@@ -1,7 +1,7 @@
 import sqlite3
 import aiosqlite
 import random
-from quart import Quart, render_template, websocket, g, request
+from quart import Quart, render_template, websocket, g, request, redirect, url_for
 
 app = Quart(__name__)
 
@@ -107,10 +107,11 @@ async def create_room():
     db = await get_db()
 
     _, new_room_name = data.decode('ascii').split('=')
+
     await db.execute("INSERT INTO rooms (name) VALUES (?)", (new_room_name,))
     await db.commit()
 
-    return await index()
+    return redirect('/')
 
 
 if __name__ == "__main__":
