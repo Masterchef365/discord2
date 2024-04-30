@@ -47,5 +47,13 @@
         {% for link in links %}
         <li><a href="{{ link.url }}">{{ link.name }}</a></li>
         {% endfor %}
+
+        <h2>Some recent messages</h2>
+
+        <div id="messages">
+            {% for msg in recent_messages %}
+            <div>[{{ msg.room_name }}] {{ msg.user }}: {{ msg.message }}</div>
+            {% endfor %}
+        </div>
     </body>
 </html> 

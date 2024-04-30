@@ -54,6 +54,19 @@ async def get_recent_messages(room_id):
         return [row async for row in cur]
 
 
+async def get_any_recent_messages(max_msgs):
+    db = await get_db()
+    query = """
+    SELECT 
+        user, message, date, room_id, rooms.name
+    FROM messages 
+    INNER JOIN rooms ON rooms.id = messages.room_id
+    ORDER BY date DESC LIMIT ?"""
+
+    async with db.execute(query, (max_msgs,)) as cur:
+        return reversed([row async for row in cur])
+
+
 async def add_msg_to_db(room_id, username, message):
     db = await get_db()
     date = int(time.time())
@@ -82,6 +95,9 @@ async def close_connection(exception):
         await db.close()
 
 # #################### Pages #################### 
+def fmt_message_template(msgs):
+    return [{'user': user, 'message': message} for (user, message, _date) in msgs]
+
 
 @app.route("/")
 async def index():
@@ -90,7 +106,13 @@ async def index():
 
     links = [{'name': name, 'url': f'/rooms/{room_id}'} for (name, room_id, ) in rooms]
 
-    return await render_template('index.html', links=links)
+    recent_messages = await get_any_recent_messages(10)
+    recent_messages = [
+        {'user': user, 'room_id': room_id, 'room_name': room_name, 'message': message} 
+        for (user, message, _date, room_id, room_name) in recent_messages
+    ]
+
+    return await render_template('index.html', links=links, recent_messages=recent_messages)
 
 
 @app.route('/rooms/<room_id>/')
@@ -105,7 +127,7 @@ async def room(room_id):
 
     # Get recent messages
     recent_messages = await get_recent_messages(room_id)
-    recent_messages = [{'user': user, 'message': message} for (user, message, _date) in recent_messages]
+    recent_messages = fmt_message_template(recent_messages)
 
     # Send user initial page
     return await render_template(
