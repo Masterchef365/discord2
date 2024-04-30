@@ -211,10 +211,12 @@ async def send_message(room_id):
 
 @app.websocket("/rooms/<room_id>/ws")
 async def ws(room_id) -> None:
+    print("Open WS")
     try:
         async for message in broker.subscribe(room_id):
             await websocket.send(message)
     finally:
+        print("Close WS")
         pass
 
 
