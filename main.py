@@ -64,7 +64,7 @@ async def get_any_recent_messages(max_msgs):
     ORDER BY date DESC LIMIT ?"""
 
     async with db.execute(query, (max_msgs,)) as cur:
-        return reversed([row async for row in cur])
+        return [row async for row in cur]
 
 
 async def add_msg_to_db(room_id, username, message):
