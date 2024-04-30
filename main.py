@@ -209,19 +209,26 @@ async def send_message(room_id):
     return "", 200
 
 
+async def _receive() -> None:
+    """This never actually receives anything, it's just used to cancel the websocket properly."""
+    while True:
+        message = await websocket.receive()
+
+
 @app.websocket("/rooms/<room_id>/ws")
 async def ws(room_id) -> None:
     print("Open WS")
     try:
+        task = asyncio.ensure_future(_receive())
         async for message in broker.subscribe(room_id):
             await websocket.send(message)
     except asyncio.CancelledError:
-        print("Handled exception")
-        # Handle disconnection here
+        print("Handled disconnection")
         raise
     finally:
         print("Close WS")
-        pass
+        task.cancel()
+        await task
 
 
 if __name__ == "__main__":
