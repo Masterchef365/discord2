@@ -215,6 +215,10 @@ async def ws(room_id) -> None:
     try:
         async for message in broker.subscribe(room_id):
             await websocket.send(message)
+    except asyncio.CancelledError:
+        print("Handled exception")
+        # Handle disconnection here
+        raise
     finally:
         print("Close WS")
         pass
