@@ -20,12 +20,30 @@
                 document.getElementById("welcome").innerHTML = "Welcome " + document.cookie;
             }
 
+            // Content filtering!!!
+            function filter_content(do_filtering) {
+                if (do_filtering) {
+                    // Prevent page reloads from undoing the button
+                    const elem = document.getElementById("refreshing");
+                    if (elem) {
+                        elem.remove();
+                    }
+                }
+
+                // Apply the filter (or not!)
+                const msgs = document.getElementsByClassName("filterable");
+                for (var i = 0; i < msgs.length; i++) {
+                    let bad_words = msgs[i].textContent.includes("sex");
+                    msgs[i].style.visibility = (do_filtering && bad_words) ? 'hidden' : 'visible';
+                }
+            }
+
             function logout() {
                 document.cookie = ""
                 startup();
             }
         </script>
-        <meta http-equiv="refresh" content="10" >
+        <meta id="refreshing" http-equiv="refresh" content="20" >
     </head>
     <body onload="startup()">
         <h1>Discord 2</h1>
@@ -33,6 +51,7 @@
         <div id="welcome">Original Text</div>
 
         <button onclick="logout()">Log out</button>
+        <button onclick="filter_content(false)">I'm an adult!!</button>
 
         <h2>Make a new chat room!</h2>
 
@@ -43,17 +62,19 @@
         </form>
 
         <h2>Chat rooms!</h2>
-
         {% for link in links %}
-        <li><a href="{{ link.url }}">{{ link.name }}</a></li>
+        <li><a class="filterable" href="{{ link.url }}">{{ link.name }}</a></li>
         {% endfor %}
 
         <h2>Some recent messages</h2>
 
         <div id="messages">
             {% for msg in recent_messages %}
-            <div>[{{ msg.room_name }}] {{ msg.user }}: {{ msg.message }}</div>
+            <div class="filterable">[{{ msg.room_name }}] {{ msg.user }}: {{ msg.message }}</div>
             {% endfor %}
         </div>
+        <script>
+            filter_content(true);
+        </script>
     </body>
 </html> 
