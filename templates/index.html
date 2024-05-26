@@ -22,6 +22,16 @@
 
             // Content filtering!!!
             function filter_content(do_filtering) {
+                // NO LONG STUFF BAD H
+                {
+                    const msgs = document.getElementsByClassName("filterable");
+                    for (var i = 0; i < msgs.length; i++) {
+                        if (msgs[i].textContent.length > 99) {
+                            msgs[i].remove();
+                        }
+                    }
+                }
+
                 if (do_filtering) {
                     // Prevent page reloads from undoing the button
                     const elem = document.getElementById("refreshing");
@@ -30,7 +40,7 @@
                     }
                 }
 
-                // Apply the filter (or not!)
+                // NO SEX h
                 const msgs = document.getElementsByClassName("filterable");
                 for (var i = 0; i < msgs.length; i++) {
                     let bad_words = msgs[i].textContent.includes("sex");
@@ -70,10 +80,10 @@
 
         <table id="messages">
             {% for msg in recent_messages %}
-            <tr class="filterable">
-                <td><a href="/rooms/{{msg.room_id}}">{{ msg.room_name }}</a></td>
-                <td>{{ msg.user }}</td>
-                <td>{{ msg.message }}</td>
+            <tr>
+                <td><a href="/rooms/{{msg.room_id}}" class="filterable">{{ msg.room_name }}</a></td>
+                <td class="filterable">{{ msg.user }}</td>
+                <td class="filterable">{{ msg.message }}</td>
             </tr>
             {% endfor %}
         </div>
