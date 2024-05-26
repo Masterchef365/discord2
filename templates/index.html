@@ -25,9 +25,11 @@
                 // NO LONG STUFF BAD H
                 {
                     const msgs = document.getElementsByClassName("filterable");
-                    for (var i = 0; i < msgs.length; i++) {
+                    for (var i = 0; i < msgs.length; ) {
                         if (msgs[i].textContent.length > 99) {
                             msgs[i].remove();
+                        } else {
+                            i++;
                         }
                     }
                 }
