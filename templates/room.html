@@ -51,7 +51,7 @@
 
         <div id="messages">
             {% for msg in recent_messages %}
-            <div>{{ msg.user }}: {{ msg.message|safe }}</div>
+            <div>{{ msg.user|safe }}: {{ msg.message|safe }}</div>
             {% endfor %}
         </div>
 
