@@ -26,7 +26,7 @@
                 {
                     const msgs = document.getElementsByClassName("filterable");
                     for (var i = 0; i < msgs.length; ) {
-                        if (msgs[i].textContent.length > 99) {
+                        if (msgs[i].offsetWidth > screen.width / 3) {
                             msgs[i].remove();
                         } else {
                             i++;
