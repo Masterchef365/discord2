@@ -68,9 +68,13 @@
 
         <h2>Some recent messages</h2>
 
-        <div id="messages">
+        <table id="messages">
             {% for msg in recent_messages %}
-            <div class="filterable"><a href="/rooms/{{msg.room_id}}">[{{ msg.room_name }}]</a>{{ msg.user }}: {{ msg.message }}</div>
+            <tr class="filterable">
+                <td><a href="/rooms/{{msg.room_id}}">{{ msg.room_name }}</a></td>
+                <td>{{ msg.user }}</td>
+                <td>{{ msg.message }}</td>
+            </tr>
             {% endfor %}
         </div>
         <script>
