@@ -81,7 +81,7 @@
         <table id="messages">
             {% for msg in recent_messages %}
             <tr>
-                <td><a href="/rooms/{{msg.room_id}}" class="filterable">{{ msg.room_name }}</a></td>
+                <td><a href="/rooms/{{msg.room_id}}"><div class="filterable">{{ msg.room_name }}</div></a></td>
                 <td class="filterable">{{ msg.user }}</td>
                 <td class="filterable">{{ msg.message }}</td>
             </tr>
