@@ -70,7 +70,7 @@
 
         <div id="messages">
             {% for msg in recent_messages %}
-            <div class="filterable">[{{ msg.room_name }}] {{ msg.user }}: {{ msg.message }}</div>
+            <div class="filterable"><a href="/rooms/{{msg.room_id}}">[{{ msg.room_name }}]</a>{{ msg.user }}: {{ msg.message }}</div>
             {% endfor %}
         </div>
         <script>
