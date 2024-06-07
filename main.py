@@ -145,6 +145,8 @@ async def punishment():
 
 
 # #################### message handling internals #################### 
+# I stole these from the Quart docs lol 
+# https://quart.palletsprojects.com/en/latest/tutorials/chat_tutorial.html#chat-tutorial
 class RoomBroker:
     def __init__(self):
         self.connections = set()
@@ -180,6 +182,7 @@ class ServerBroker:
 
 
 def message_magic(message: str):
+    """Embeddings and such"""
     if message.startswith('http'):
         if message.endswith(('png', 'gif', 'jpg', 'jpeg', 'webp', 'svg')):
             # Image
